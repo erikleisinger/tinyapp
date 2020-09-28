@@ -2,13 +2,32 @@ const express = require("express");
 const app = express();
 const PORT = 3030; // default port 8080
 
+app.set('view engine', 'ejs');
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  let mascots = [
+    { name: 'Sammy', organization: "DigitalOcean", birth_year: 2012 },
+    { name: 'Tux', organization: "Linux", birth_year: 1996 },
+    { name: 'Moby Dock', organization: "Docker", birth_year: 2013 }
+  ];
+
+  let tagline = "I like you";
+
+
+  res.render('pages/index', {
+    mascots: mascots,
+    tagline: tagline
+  });
+
+});
+
+app.get("/about", (req, res) => {
+  res.render('pages/about');
 });
 
 app.get("/urls.json", (req, res) => {
