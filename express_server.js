@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const PORT = 3050; // default port 8080
 
 app.set('view engine', 'ejs');
+app.use(cookieParser());
 
 const generateRandomString = function () {
   let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
@@ -23,22 +25,16 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-app.use(bodyParser.urlencoded({extended: true}));
+
+
+
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  let mascots = [
-    { name: 'Sammy', organization: "DigitalOcean", birth_year: 2012 },
-    { name: 'Tux', organization: "Linux", birth_year: 1996 },
-    { name: 'Moby Dock', organization: "Docker", birth_year: 2013 }
-  ];
-
-  let tagline = "I like you";
-
-
-  res.render('pages/index', {
-    mascots: mascots,
-    tagline: tagline
-  });
+  const templateVars = {
+    username: req.cookies["username"],
+  };
+  res.render('pages/index', templateVars);
 
 });
 app.get('/u/:shortURL', (req, res) => {
@@ -70,18 +66,40 @@ app.post('/urls/:id/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+app.post('/login', (req, res) => {
+  console.log(req.body);
+  res.cookie('username', 'hiuefbwubf');
+  res.redirect('/urls');
+})
+
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
+  res.redirect('/urls');
+})
+
 
 
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"]
+  };
+ 
   res.render("urls_index", templateVars);
 });
 app.get('/urls/new', (req, res) => {
-  res.render('urls_new');
+  const templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render('urls_new', templateVars);
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  const templateVars = {shortURL: req.params.shortURL, longURL: `${urlDatabase[req.params.shortURL]}`};
+  const templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: `${urlDatabase[req.params.shortURL]}`,
+    username: req.cookies["username"]
+  };
   console.log(req.params.shortURL)
   res.render('urls_show', templateVars);
 });
