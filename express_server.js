@@ -47,6 +47,14 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(`http://${long}`);
 });
 
+app.post('/updateURL', (req, res) => {
+  console.log(`This is the body: ${JSON.stringify(req.body)}`);
+  let keyName = Object.keys(req.body)[0];
+  urlDatabase[keyName] = req.body[keyName];
+  res.redirect('/urls');
+
+});
+
 app.post("/urls", (req, res) => {
   let randomId = generateRandomString()
   urlDatabase[randomId] = req.body.longURL;
@@ -62,6 +70,8 @@ app.post('/urls/:id/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+
+
 app.get('/urls', (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
@@ -71,7 +81,8 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  const templateVars = {shortURL: req.params.shortURL, longURL: `urls/${req.params.shortURL}`};
+  const templateVars = {shortURL: req.params.shortURL, longURL: `${urlDatabase[req.params.shortURL]}`};
+  console.log(req.params.shortURL)
   res.render('urls_show', templateVars);
 });
 
