@@ -50,8 +50,16 @@ app.get('/u/:shortURL', (req, res) => {
 app.post("/urls", (req, res) => {
   let randomId = generateRandomString()
   urlDatabase[randomId] = req.body.longURL;
-  console.log(urlDatabase);
+  console.log(`User created entry { ${randomId}: "${req.body.longURL}" }`);
+  console.log(`Updated URLS: ${JSON.stringify(urlDatabase)}`);
   res.redirect(`/urls/${randomId}`)
+});
+
+app.post('/urls/:id/delete', (req, res) => {
+  console.log(`User deleted entry { ${req.params.id}: "${urlDatabase[req.params.id]}" }`);
+  delete urlDatabase[req.params.id];
+  console.log(`Updated urls: ${JSON.stringify(urlDatabase)}`)
+  res.redirect('/urls');
 });
 
 app.get('/urls', (req, res) => {
