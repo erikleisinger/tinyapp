@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
-const PORT = 3030; // default port 8080
+const PORT = 3050; // default port 8080
 
 app.set('view engine', 'ejs');
 
@@ -41,6 +41,11 @@ app.get("/", (req, res) => {
   });
 
 });
+app.get('/u/:shortURL', (req, res) => {
+  let long = urlDatabase[req.params.shortURL]
+  console.log(long);
+  res.redirect(`http://${long}`);
+});
 
 app.post("/urls", (req, res) => {
   let randomId = generateRandomString()
@@ -61,7 +66,6 @@ app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {shortURL: req.params.shortURL, longURL: `urls/${req.params.shortURL}`};
   res.render('urls_show', templateVars);
 });
-
 
 app.get("/about", (req, res) => {
   res.render('pages/about');
