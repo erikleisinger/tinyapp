@@ -68,9 +68,20 @@ app.post("/urls", (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  console.log(`User deleted entry { ${req.params.id}: "${urlDatabase[req.params.id]}" }`);
-  delete urlDatabase[req.params.id];
-  console.log(`Updated urls: ${JSON.stringify(urlDatabase)}`)
+  let userId = req.cookies["user_id"];
+  let userURLs = urlsForUser(urlDatabase, userId);
+  console.log(userURLs);
+  if (userURLs) {
+    if (userURLs[req.params.id]) {
+      console.log(`User ${userId} deleted entry { ${req.params.id}: "${urlDatabase[req.params.id]}" }`);
+      delete urlDatabase[req.params.id];
+      console.log(`Updated urls: ${JSON.stringify(urlDatabase)}`)
+    }
+
+  } else {
+    // will not delete
+  }
+  
   res.redirect('/urls');
 });
 
@@ -163,8 +174,19 @@ app.get('/urls/:shortURL', (req, res) => {
     longURL: `${urlDatabase[req.params.shortURL]}`,
     user: users[req.cookies["user_id"]]
   };
-  console.log(req.params.shortURL)
-  res.render('urls_show', templateVars);
+
+  let userId = req.cookies["user_id"];
+  let userURLs = urlsForUser(urlDatabase, userId);
+  if (userURLs) {
+    if (userURLs[req.params.shortURL]) {
+      res.render('urls_show', templateVars);
+    }
+
+  } else {
+    res.sendStatus(500);
+  }
+
+  
 });
 
 app.get("/about", (req, res) => {
