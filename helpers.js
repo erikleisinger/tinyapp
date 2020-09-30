@@ -10,15 +10,25 @@ const generateRandomString = function () {
   return randomString;
 };
 
-const validateUser = function(db, email) {
-  
-  for (let user in db) {
-    console.log(`this is ${user}'s email: ${db[user].email}`)
-    if (db[user].email === email) {
-      return true;
+const validateUser = function(db, email, password) {
+  if (!email && !password) {
+    return `Please complete all fields`;
+  } else if (!email) {
+    return `Please enter a valid email address`;
+  } else if (!password) {
+    return `Please enter a password`;
+  } else if (password.length < 7) {
+    return `Password must be at least 7 characters`
+  } else {
+    for (let user in db) {
+      console.log(`this is ${user}'s email: ${db[user].email}`)
+      if (db[user].email === email) {
+        return `Email already in use`;
+      }
     }
+    return null;
   }
-  return false;
+  
 };
 
 module.exports = { generateRandomString, validateUser };

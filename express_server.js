@@ -84,10 +84,10 @@ app.post('/urls/:id/delete', (req, res) => {
 app.post('/newUser', (req, res) => {
   const templateVars = {
     user: users[req.cookies["username"]],
-    error: `Email already in use`
   };
-  if (validateUser(users, req.body.email)) {
-    console.log(`error: email already in use`);
+  let error = validateUser(users, req.body.email, req.body.password);
+  if (error) {
+    templateVars.error = error;
     res.render('register', templateVars);
 
   } else {
