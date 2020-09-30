@@ -12,6 +12,7 @@
         <li class="nav-item">
           <a class="nav-link" href="/urls/new">Create New URL</a>
         </li>
+        
       </ul>
        
       <span class="navbar-text ml-1">
@@ -19,6 +20,10 @@
           <form class="form-check form-check-inline" action="/login" method="POST">
             <input class="form-control mr-2" type="text" name="username" placeholder="username">
             <button type="submit" class="btn btn-light">Login</button>
+          </form> 
+          <form class="form-check form-check-inline" action="/goRegister" method="GET">
+            <input class="form-control mr-2" type="hidden" name="goRegister">
+            <button type="submit" class="btn btn-secondary">Register</button>
           </form> 
        <% } else { %>
         <form class="form-check form-check-inline" action="/logout" method="POST">

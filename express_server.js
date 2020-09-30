@@ -37,6 +37,22 @@ app.get("/", (req, res) => {
   res.render('pages/index', templateVars);
 
 });
+
+app.get('/register', (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"],
+  };
+  res.render('register', templateVars);
+});
+
+app.get('/goRegister', (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"],
+  };
+  res.render('register', templateVars);
+});
+
+
 app.get('/u/:shortURL', (req, res) => {
   let long = urlDatabase[req.params.shortURL]
   console.log(long);
