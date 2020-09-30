@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { generateRandomString, validateUser } = require('./helpers');
+const { generateRandomString, validateUser, loginUser } = require('./helpers');
 const PORT = 3050; // default port 8080
 
 app.set('view engine', 'ejs');
@@ -16,9 +16,9 @@ const urlDatabase = {
 
 const users = {
   "userRandomID1": {
-    id: "",
-    email: "",
-    password: "",
+    id: "erik",
+    email: "me@me.com",
+    password: "12345678",
   },
 };
 
@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   const templateVars = {
-    user: users[req.cookies["username"]],
+    user: users[req.cookies["user_id"]],
   };
   res.render('pages/index', templateVars);
 
@@ -37,7 +37,7 @@ app.get("/", (req, res) => {
 
 app.get('/register', (req, res) => {
   const templateVars = {
-    user: users[req.cookies["username"]],
+    user: users[req.cookies["user_id"]],
     error: null
   };
   res.render('register', templateVars);
@@ -45,7 +45,7 @@ app.get('/register', (req, res) => {
 
 app.get('/goRegister', (req, res) => {
   const templateVars = {
-    user: users[req.cookies["username"]],
+    user: users[req.cookies["user_id"]],
     error: null
   };
   res.render('register', templateVars);
@@ -83,7 +83,7 @@ app.post('/urls/:id/delete', (req, res) => {
 
 app.post('/newUser', (req, res) => {
   const templateVars = {
-    user: users[req.cookies["username"]],
+    user: users[req.cookies["user_id"]],
   };
   let error = validateUser(users, req.body.email, req.body.password);
   if (error) {
@@ -106,17 +106,34 @@ app.post('/newUser', (req, res) => {
 
 app.get('/login', (req, res) => {
   const templateVars = {
-    user: users[req.cookies["user_id"]]
+    user: users[req.cookies["user_id"]],
+    error: null
   };
   res.render('login', templateVars);
 });
 
 app.post('/login', (req, res) => {
-  res.redirect('/urls');
+  const templateVars = {
+    urls: urlDatabase,
+    user: "",
+    error: null,
+  };
+  
+    if (loginUser(users, req.body.email, req.body.password)) {
+      let userId = loginUser(users, req.body.email, req.body.password);
+      res.cookie("user_id", userId);
+      templateVars.user = users[userId];
+      res.render('urls_index', templateVars);
+    } else {
+    templateVars.error = `Email or password incorrect.`;
+    res.render('login', templateVars);
+  }
+  
 })
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+ 
+  res.clearCookie("user_id");
   res.redirect('/urls');
 });
 
