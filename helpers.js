@@ -10,4 +10,15 @@ const generateRandomString = function () {
   return randomString;
 };
 
-module.exports = { generateRandomString };
+const validateUser = function(db, email) {
+  
+  for (let user in db) {
+    console.log(`this is ${user}'s email: ${db[user].email}`)
+    if (db[user].email === email) {
+      return true;
+    }
+  }
+  return false;
+};
+
+module.exports = { generateRandomString, validateUser };

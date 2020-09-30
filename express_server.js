@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { generateRandomString } = require('./helpers');
+const { generateRandomString, validateUser } = require('./helpers');
 const PORT = 3050; // default port 8080
 
 app.set('view engine', 'ejs');
@@ -20,12 +20,7 @@ const users = {
     email: "",
     password: "",
   },
-  "userRandomID2": {
-    id: "",
-    email: "",
-    password: "",
-  }
-}
+};
 
 
 
@@ -43,6 +38,7 @@ app.get("/", (req, res) => {
 app.get('/register', (req, res) => {
   const templateVars = {
     user: users[req.cookies["username"]],
+    error: null
   };
   res.render('register', templateVars);
 });
@@ -50,6 +46,7 @@ app.get('/register', (req, res) => {
 app.get('/goRegister', (req, res) => {
   const templateVars = {
     user: users[req.cookies["username"]],
+    error: null
   };
   res.render('register', templateVars);
 });
@@ -74,7 +71,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[randomId] = req.body.longURL;
   console.log(`User created entry { ${randomId}: "${req.body.longURL}" }`);
   console.log(`Updated URLS: ${JSON.stringify(urlDatabase)}`);
-  res.redirect(`/urls/${randomId}`)
+  res.redirect(`/urls/${randomId}`);
 });
 
 app.post('/urls/:id/delete', (req, res) => {
@@ -85,19 +82,26 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 app.post('/newUser', (req, res) => {
-  console.log(req.body);
-  console.log(req.body.email)
-  let newId = generateRandomString();
-  users[newId] = {
-    id: newId,
-    email: req.body.email,
-    password: req.body.password
+  const templateVars = {
+    user: users[req.cookies["username"]],
+    error: `Email already in use`
   };
+  if (validateUser(users, req.body.email)) {
+    console.log(`error: email already in use`);
+    res.render('register', templateVars);
 
-  console.log(users);
-  res.cookie('user_id', newId);
-  console.log(users[newId]);
-  res.redirect('/urls');
+  } else {
+    let newId = generateRandomString();
+    users[newId] = {
+      id: newId,
+      email: req.body.email,
+      password: req.body.password
+    };
+  
+    console.log(users);
+    res.cookie('user_id', newId);
+    res.redirect('/urls');
+  }
 });
 
 app.post('/login', (req, res) => {
@@ -107,7 +111,7 @@ app.post('/login', (req, res) => {
 })
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
 
