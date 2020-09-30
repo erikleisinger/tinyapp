@@ -39,4 +39,33 @@ const validateUser = function(db, email, password) {
   
 };
 
-module.exports = { generateRandomString, validateUser, loginUser };
+// "userRandomID1": {
+//   id: "erik",
+//   email: "me@me.com",
+//   password: "12345678",
+// },
+
+// const urlDatabase = {
+//   "b2xVn2": {longUrl: "http://www.lighthouselabs.ca", userId: "userRandomID1"},
+//   "9sm5xK": {longUrl: "http://www.google.ca", userId: "userRandomID1"},
+// };
+
+const  urlsForUser = function (db, id) {
+  let returnData = {
+
+  };
+  for (let url in db) {
+    if (db[url].userId === id) {
+      returnData[url] = {longUrl: `${db[url].longUrl}`, userId: `${db[url].userId}`}
+    }
+  }
+  if (Object.keys(returnData).length === 0) {
+    return null
+  } else {
+    return returnData;
+  }
+  
+}
+
+
+module.exports = { generateRandomString, validateUser, loginUser, urlsForUser }
