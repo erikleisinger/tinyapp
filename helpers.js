@@ -18,8 +18,10 @@ const loginUser = function (db, email, password) {
     // first matches the passed in email with an email in the database
     if (db[user].email === email) {
       // once correct email is found, it checks the plaintext password passed in with the hash in db[user]
-      return bcrypt.compareSync(password, db[user].password);
-    };
+      if (bcrypt.compareSync(password, db[user].password) === true) {
+      return user;
+      }
+    }
   }
   return null;
 };
@@ -50,7 +52,7 @@ const  urlsForUser = function (db, id) {
   };
   for (let url in db) {
     if (db[url].userId === id) {
-      returnData[url] = {longUrl: `${db[url].longUrl}`, userId: `${db[url].userId}`}
+      returnData[url] = {longUrl: db[url].longUrl, userId: db[url].userId}
     }
   }
   if (Object.keys(returnData).length === 0) {
@@ -60,6 +62,8 @@ const  urlsForUser = function (db, id) {
   }
   
 }
+
+
 
 
 module.exports = { generateRandomString, validateUser, loginUser, urlsForUser }

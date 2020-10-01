@@ -51,25 +51,38 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/u/:shortURL', (req, res) => {
+  console.log(`This is the current urlDatabase before redirect: ${JSON.stringify(urlDatabase)}`);
+  console.log(`this is the req.params.shortURL: ${req.params.shortURL}`);
   let long = urlDatabase[req.params.shortURL].longUrl;
-  console.log(long);
-  res.redirect(`${long}`);
+  
+  res.redirect(long);
+  // console.log(long);
+  // res.redirect(long);
 });
 
 app.post('/updateURL', (req, res) => {
-  console.log(`This is the body: ${JSON.stringify(req.body)}`);
+  const templateVars = {
+    urls: null,
+    user: users[req.cookies["user_id"]]
+  };
   let keyName = Object.keys(req.body)[0];
-  urlDatabase[keyName] = req.body[keyName];
-  res.redirect('/urls');
+  urlDatabase[keyName].longUrl = req.body[keyName];
+  templateVars.urls = urlsForUser(urlDatabase, req.cookies["user_id"]);
 
+  res.render('urls_index', templateVars);
 });
 
 app.post("/urls", (req, res) => {
+  const templateVars = {
+    urls: null,
+    user: users[req.cookies["user_id"]]
+  };
   let randomId = generateRandomString()
-  urlDatabase[randomId] = req.body.longURL;
-  console.log(`User created entry { ${randomId}: "${req.body.longURL}" }`);
+  urlDatabase[randomId] = {longUrl: req.body.longURL, userId: req.cookies["user_id"]};
   console.log(`Updated URLS: ${JSON.stringify(urlDatabase)}`);
-  res.redirect(`/urls/${randomId}`);
+  templateVars.urls = urlsForUser(urlDatabase, req.cookies["user_id"]);
+  
+  res.render(`urls_index`, templateVars);
 });
 
 app.post('/urls/:id/delete', (req, res) => {
@@ -131,12 +144,14 @@ app.post('/login', (req, res) => {
     email: null,
   };
   if (loginUser(users, req.body.email, req.body.password)) {
+    console.log(`loginUser returned true`)
     let userId = loginUser(users, req.body.email, req.body.password);
     res.cookie("user_id", userId);
     templateVars.user = users[userId];
     templateVars.urls = urlsForUser(urlDatabase, userId);
     res.render('urls_index', templateVars);
   } else {
+    console.log(`loginUser returned false`)
     templateVars.error = `Email or password incorrect.`;
     templateVars.email = req.body.email;
     res.render('login', templateVars);
@@ -168,7 +183,9 @@ app.get('/urls/new', (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]]
   };
-  if (req.cookies["user_id]"]) {
+
+  if (req.cookies["user_id"]) {
+   
     res.render('urls_new', templateVars);
   } else {
     res.redirect('/login');
@@ -179,7 +196,7 @@ app.get('/urls/new', (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: `${urlDatabase[req.params.shortURL]}`,
+    longURL: `${urlDatabase[req.params.shortURL].longUrl}`,
     user: users[req.cookies["user_id"]]
   };
 
