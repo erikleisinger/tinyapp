@@ -51,20 +51,19 @@ const validateId = function (db, id) {
 const validateUser = function(db, email, password) {
   if (!email && !password) {
     return `Please complete all fields`;
-  } else if (!email) {
-    return `Please enter a valid email address`;
   } else if (!password) {
     return `Please enter a password`;
-  } else if (password.length < 7) {
-    return `Password must be at least 7 characters`
   } else {
     for (let user in db) {
       if (db[user].email === email) {
         return `Email already in use`;
       }
     }
-    return null;
   }
+  if (password.length < 7) {
+    return `Password must be at least 7 characters`
+  } 
+  return null;
   
 };
 

@@ -58,13 +58,21 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  console.log(`This is the current urlDatabase before redirect: ${JSON.stringify(urlDatabase)}`);
-  console.log(`this is the req.params.shortURL: ${req.params.shortURL}`);
-  let long = urlDatabase[req.params.shortURL].longUrl;
+  const templateVars = {
+    user: null,
+    error: null,
+  };
 
-  res.redirect(long);
-  // console.log(long);
-  // res.redirect(long);
+  
+  // first check if the URL exists
+  if (validateId(urlDatabase, req.params.shortURL) === false) {
+    templateVars.error = `URL does not exist.`
+    templateVars.user = users[req.session.user_id],
+    res.render('pages/index', templateVars);
+  }
+
+  // if URL exists, redirect to page
+  res.redirect(urlDatabase[req.params.shortURL].longUrl);
 });
 
 app.post('/updateURL', (req, res) => {
@@ -149,12 +157,14 @@ app.post('/register', (req, res) => {
       email: req.body.email,
       password: hash
     };
-    templateVars.user = users[req.session.user_id];
+    
     templateVars.email = req.body.email;
     templateVars.urls = urlsForUser(urlDatabase, newId);
     templateVars.register = true;
     console.log(users[newId])
-    res.render('login', templateVars);
+    req.session.user_id = newId;
+    templateVars.user = users[req.session.user_id];
+    res.render('urls_index', templateVars);
   }
 });
 
@@ -195,7 +205,7 @@ app.post('/login', (req, res) => {
 
 app.post('/logout', (req, res) => {
 
-  req.session.user_id = null;
+  req.session = null;
   res.redirect('/urls');
 });
 
