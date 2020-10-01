@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 
-const { generateRandomString, validateUser, loginUser, urlsForUser } = require('./helpers');
+const { generateRandomString, validateUser, loginUser, urlsForUser, urlConverter } = require('./helpers');
 const PORT = 3050; // default port 8080
 
 app.set('view engine', 'ejs');
@@ -66,7 +66,11 @@ app.post('/updateURL', (req, res) => {
     user: users[req.cookies["user_id"]]
   };
   let keyName = Object.keys(req.body)[0];
-  urlDatabase[keyName].longUrl = req.body[keyName];
+
+  // converted to http:// url format
+  let convertedUrl = urlConverter(req.body[keyName]);
+
+  urlDatabase[keyName].longUrl = convertedUrl;
   templateVars.urls = urlsForUser(urlDatabase, req.cookies["user_id"]);
 
   res.render('urls_index', templateVars);
@@ -78,8 +82,11 @@ app.post("/urls", (req, res) => {
     user: users[req.cookies["user_id"]]
   };
   let randomId = generateRandomString()
-  urlDatabase[randomId] = {longUrl: req.body.longURL, userId: req.cookies["user_id"]};
-  console.log(`Updated URLS: ${JSON.stringify(urlDatabase)}`);
+
+  // url is passed through a function which ensures it begins 'http://', to ensure no redirect problems
+  let convertedUrl = urlConverter(req.body.longURL);
+  urlDatabase[randomId] = {longUrl: convertedUrl, userId: req.cookies["user_id"]};
+
   templateVars.urls = urlsForUser(urlDatabase, req.cookies["user_id"]);
   
   res.render(`urls_index`, templateVars);

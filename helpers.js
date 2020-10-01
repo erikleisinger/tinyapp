@@ -61,9 +61,18 @@ const  urlsForUser = function (db, id) {
     return returnData;
   }
   
-}
+};
+
+const urlConverter = function (url) {
+  
+  if ( /^http:\/\//.test(url) === true) {
+    return url;
+  } else {
+    return "http://" + url;
+  }
+};
 
 
 
 
-module.exports = { generateRandomString, validateUser, loginUser, urlsForUser }
+module.exports = { generateRandomString, validateUser, loginUser, urlsForUser, urlConverter }
