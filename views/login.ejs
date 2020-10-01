@@ -35,6 +35,11 @@
           <div class="card-body">
 
             <form action="/login" method="POST">
+              <% if (register) { %>
+                <div class="alert alert-danger" role="alert">
+                  
+                </div>
+                <% } %>
               <% if (error) { %>
                 <div class="alert alert-danger" role="alert">
                   <%= error %>
