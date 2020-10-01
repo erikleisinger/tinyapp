@@ -161,13 +161,11 @@ app.post('/login', (req, res) => {
     register: null,
   };
   if (loginUser(users, req.body.email, req.body.password)) {
-    console.log(`loginUser returned true`)
+   
     let userId = loginUser(users, req.body.email, req.body.password);
     console.log(`this is the userId returned from loginUser: ${userId}`);
     req.session.user_id = userId;
-    console.log(`this is req.session.user_id: ${req.session.user_id}`)
-    console.log(`this is users database: ${JSON.stringify(users)}`)
-    console.log(users[String(req.session.user_id)] === true);
+    
     templateVars.user = users[req.session.user_id];
     templateVars.urls = urlsForUser(urlDatabase, userId);
     res.render('urls_index', templateVars);

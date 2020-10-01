@@ -12,17 +12,23 @@ const generateRandomString = function () {
   return randomString;
 };
 
-const loginUser = function (db, email, password) {
-  for (let user in db) {
-    
-    // first matches the passed in email with an email in the database
-    if (db[user].email === email) {
-      // once correct email is found, it checks the plaintext password passed in with the hash in db[user]
-      if (bcrypt.compareSync(password, db[user].password) === true) {
-      return user;
-      }
+const getUserByEmail = function (db, email) {
+  for (let entry in db) {
+    if (db[entry].email === email) {
+      return entry;
     }
-  }
+  };
+  return false;
+}
+
+const loginUser = function (db, email, password) {
+    let userAccount = getUserByEmail(db, email);
+    if (userAccount) {
+      if (bcrypt.compareSync(password, db[userAccount].password) === true) {
+        return userAccount;
+        }
+    }
+      
   return null;
 };
 
