@@ -4,13 +4,20 @@
     <%- include('../partials/head'); %>
   </head>
   <body class="container">
+    <% if (error) { %>
+      <div class="alert alert-danger">
+        <%= error %>
+      </div>
+   <% } %>
     <header>
       <%- include('../partials/_header'); %>
     </header>
+    
     <main>
       <div class="jumbotron">
-          <h1>This is great</h1>
-          <p>Welcome to templating using EJS</p>
+          <h1>TinyApp</h1>
+          <p>Welcome to your new life</p>
+          
           
       </div>
   </main>

@@ -11,6 +11,10 @@
 
 <body>
   <%- include('partials/_header'); %>
+  <% if (error) { %>
+    <div class="alert alert-danger"><%= error %></div>
+
+ <% } %>
   <main style="margin: 1em;">
     <h3>My URLs</h3>
     <table class="table">
