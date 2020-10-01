@@ -39,6 +39,15 @@ const loginUser = function (db, email, password) {
   return null;
 };
 
+const validateId = function (db, id) {
+  for (let entry in db) {
+    if (entry === id) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const validateUser = function(db, email, password) {
   if (!email && !password) {
     return `Please complete all fields`;
@@ -88,4 +97,4 @@ const urlConverter = function (url) {
 
 
 
-module.exports = { generateRandomString, validateUser, loginUser, urlsForUser, urlConverter, getUserByEmail }
+module.exports = { generateRandomString, validateUser, loginUser, urlsForUser, urlConverter, getUserByEmail, validateId }

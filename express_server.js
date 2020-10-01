@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 
-const { generateRandomString, validateUser, loginUser, urlsForUser, urlConverter } = require('./helpers');
+const { generateRandomString, validateUser, loginUser, urlsForUser, urlConverter, validateId } = require('./helpers');
 const PORT = 3050; // default port 8080
 
 app.set('view engine', 'ejs');
@@ -19,7 +19,7 @@ app.use(cookieSession({
 
 
 const urlDatabase = {
-  "b2xVn2": { longUrl: "http://www.lighthouselabs.ca", userId: "userRandomID1" },
+  " ": { longUrl: "http://www.lighthouselabs.ca", userId: "userRandomID1" },
   "9sm5xK": { longUrl: "http://www.google.ca", userId: "userRandomID1" },
 };
 
@@ -102,18 +102,28 @@ app.post("/urls", (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
+  const templateVars = {
+    user: users[req.session.user_id],
+    error: null,
+  };
+  // first check if the id exists
+
+
+  if (validateId(urlDatabase, req.params.id) === false) {
+    templateVars.error = `URL does not exist.`
+    res.status(400).send('URL not found.')
+  }
+
   let userId = req.session.user_id;
   let userURLs = urlsForUser(urlDatabase, userId);
-  console.log(userURLs);
   if (userURLs) {
     if (userURLs[req.params.id]) {
       console.log(`User ${userId} deleted entry { ${req.params.id}: "${urlDatabase[req.params.id]}" }`);
       delete urlDatabase[req.params.id];
       console.log(`Updated urls: ${JSON.stringify(urlDatabase)}`)
     }
-
   } else {
-    // will not delete
+     res.status(400).send('Access denied.')
   }
 
   res.redirect('/urls');
@@ -223,13 +233,23 @@ app.get('/urls/new', (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: `${urlDatabase[req.params.shortURL].longUrl}`,
+    longURL: null,
     user: users[req.session.user_id],
   };
 
+// first check to see if shortURL exists at all
+
+  if (validateId(urlDatabase, req.params.shortURL) == false) {
+  
+  templateVars.error = `URL does not exist.`
+  res.render('pages/index', templateVars)
+}
+  
   let userId = req.session.user_id;
+
   // checks if client is logged in
   if (userId) {
+   
     // if logged in, finds the client's account URLS
     let userURLs = urlsForUser(urlDatabase, userId);
     
