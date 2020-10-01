@@ -12,6 +12,12 @@ const generateRandomString = function () {
   return randomString;
 };
 
+const testDb = {
+  "erik": {
+    email: "erik@erik.com",
+  }
+};
+
 const getUserByEmail = function (db, email) {
   for (let entry in db) {
     if (db[entry].email === email) {
@@ -19,7 +25,8 @@ const getUserByEmail = function (db, email) {
     }
   };
   return false;
-}
+};
+console.log(getUserByEmail(testDb, "erik@erik.com"))
 
 const loginUser = function (db, email, password) {
     let userAccount = getUserByEmail(db, email);
@@ -81,4 +88,4 @@ const urlConverter = function (url) {
 
 
 
-module.exports = { generateRandomString, validateUser, loginUser, urlsForUser, urlConverter }
+module.exports = { generateRandomString, validateUser, loginUser, urlsForUser, urlConverter, getUserByEmail }
