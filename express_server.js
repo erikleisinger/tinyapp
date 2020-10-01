@@ -48,7 +48,8 @@ app.get("/", (req, res) => {
 app.get('/register', (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
-    error: null
+    error: null,
+    register: null,
   };
   res.render('register', templateVars);
 });
@@ -118,6 +119,7 @@ app.post('/register', (req, res) => {
     user: "",
     urls: null,
     error: null,
+    register: null,
   };
   let error = validateUser(users, req.body.email, req.body.password);
   if (error) {
@@ -135,6 +137,7 @@ app.post('/register', (req, res) => {
     templateVars.user = users[req.session.user_id];
     templateVars.email = req.body.email;
     templateVars.urls = urlsForUser(urlDatabase, newId);
+    templateVars.register = true;
     res.render('login', templateVars);
   }
 });
@@ -143,7 +146,8 @@ app.get('/login', (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
     error: null,
-    email: null
+    email: null,
+    register: null,
   };
   res.render('login', templateVars);
 });
@@ -154,6 +158,7 @@ app.post('/login', (req, res) => {
     user: "",
     error: null,
     email: null,
+    register: null,
   };
   if (loginUser(users, req.body.email, req.body.password)) {
     console.log(`loginUser returned true`)
