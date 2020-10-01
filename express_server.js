@@ -17,13 +17,13 @@ app.use(cookieSession({
 }));
 
 
-
 const urlDatabase = {
-  " ": { longUrl: "http://www.lighthouselabs.ca", userId: "userRandomID1" },
+  // placeholder for testing
   "9sm5xK": { longUrl: "http://www.google.ca", userId: "userRandomID1" },
 };
 
 const users = {
+  // placeholder for testing
   'bHuQNK': {
     id: 'bHuQNK',
     email: 'erikleisinger@gmail.com',
@@ -36,8 +36,8 @@ const users = {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// HOME PAGE
 
+// HOME PAGE
 app.get("/", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
@@ -81,12 +81,13 @@ app.post('/updateURL', (req, res) => {
     user: users[req.session.user_id],
     error: null,
   };
-  let keyName = Object.keys(req.body)[0];
+ 
+  let shortURL = Object.keys(req.body)[0];
 
-  // converted to http:// url format
-  let convertedUrl = urlConverter(req.body[keyName]);
+  // convert the link to http:// url format
+  let convertedUrl = urlConverter(req.body[shortURL]);
 
-  urlDatabase[keyName].longUrl = convertedUrl;
+  urlDatabase[shortURL].longUrl = convertedUrl;
   templateVars.urls = urlsForUser(urlDatabase, req.session.user_id);
 
   res.render('urls_index', templateVars);

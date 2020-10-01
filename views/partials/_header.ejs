@@ -1,6 +1,6 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-    <a class="navbar-brand" href="/urls">TinyApp</a>
+    <i class="fas fa-frog mr-2"></i><a class="navbar-brand" href="/urls">TinyApp</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -26,9 +26,9 @@
           </form> 
        <% } else { %>
         <form class="form-check form-check-inline" action="/logout" method="POST">
-          <span class="mr-3">logged in as: <%= user.email%></span>
+          <span class="mr-3"><%= user.email%></span>
           <input type="hidden" name="logout">
-          <button type="submit" class="btn btn-light">LOGOUT</button>
+          <button type="submit" class="btn btn-outline-light">Logout</button>
         </form>
       <% } %> 
        
