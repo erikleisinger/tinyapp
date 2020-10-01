@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 const generateRandomString = function () {
   let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
 
@@ -12,9 +14,12 @@ const generateRandomString = function () {
 
 const loginUser = function (db, email, password) {
   for (let user in db) {
-    if (db[user].password === password && db[user].email === email) {
-      return user;
-    } 
+    
+    // first matches the passed in email with an email in the database
+    if (db[user].email === email) {
+      // once correct email is found, it checks the plaintext password passed in with the hash in db[user]
+      return bcrypt.compareSync(password, db[user].password);
+    };
   }
   return null;
 };
@@ -38,17 +43,6 @@ const validateUser = function(db, email, password) {
   }
   
 };
-
-// "userRandomID1": {
-//   id: "erik",
-//   email: "me@me.com",
-//   password: "12345678",
-// },
-
-// const urlDatabase = {
-//   "b2xVn2": {longUrl: "http://www.lighthouselabs.ca", userId: "userRandomID1"},
-//   "9sm5xK": {longUrl: "http://www.google.ca", userId: "userRandomID1"},
-// };
 
 const  urlsForUser = function (db, id) {
   let returnData = {

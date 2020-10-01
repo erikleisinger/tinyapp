@@ -2,6 +2,11 @@ const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
+
 const { generateRandomString, validateUser, loginUser, urlsForUser } = require('./helpers');
 const PORT = 3050; // default port 8080
 
@@ -85,7 +90,7 @@ app.post('/urls/:id/delete', (req, res) => {
   res.redirect('/urls');
 });
 
-app.post('/newUser', (req, res) => {
+app.post('/register', (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]],
   };
@@ -95,11 +100,12 @@ app.post('/newUser', (req, res) => {
     res.render('register', templateVars);
 
   } else {
+    let hash = bcrypt.hashSync(req.body.password, saltRounds);
     let newId = generateRandomString();
     users[newId] = {
       id: newId,
       email: req.body.email,
-      password: req.body.password
+      password: hash
     };
 
     console.log(users);
@@ -111,7 +117,8 @@ app.post('/newUser', (req, res) => {
 app.get('/login', (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]],
-    error: null
+    error: null,
+    email: null
   };
   res.render('login', templateVars);
 });
@@ -121,8 +128,8 @@ app.post('/login', (req, res) => {
     urls: null,
     user: "",
     error: null,
+    email: null,
   };
-
   if (loginUser(users, req.body.email, req.body.password)) {
     let userId = loginUser(users, req.body.email, req.body.password);
     res.cookie("user_id", userId);
@@ -131,6 +138,7 @@ app.post('/login', (req, res) => {
     res.render('urls_index', templateVars);
   } else {
     templateVars.error = `Email or password incorrect.`;
+    templateVars.email = req.body.email;
     res.render('login', templateVars);
   }
 
