@@ -7,106 +7,106 @@
 
 <body class="container">
 
-  
+
   <%- include('partials/_header'); %>
   <% if (error) { %>
   <div class="alert alert-danger"><%= error %></div>
 
   <% } %>
   <% if (!urls) { %>
-    <div class="container-fluid">
-      <tr class="row-fluid">
-        <td scope="col">
-          <div class="alert alert-warning mt-4" role="alert">
-            Looks like you don't have any URLs yet.
-  
-            Why not <a href="/urls/new" class="alert-link">make one now?</a>
-          </div>
-        </td>
-  
-  
-      </tr>
-  
-    </div>
-  
-  
-    <% } %>
+  <div class="container-fluid">
+    <tr class="row-fluid">
+      <td scope="col">
+        <div class="alert alert-warning mt-4" role="alert">
+          Looks like you don't have any URLs yet.
+
+          Why not <a href="/urls/new" class="alert-link">make one now?</a>
+        </div>
+      </td>
+
+
+    </tr>
+
+  </div>
+
+
+  <% } %>
   <main style="margin: 1em">
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-        
-    <h3 class="card-title">My URLs</h3>
-    
-      <div class="card bg-light">
-    <table class="table">
-      <thead>
-        <tr class="row-fluid">
 
-          <th scope="col">Short URL</th>
-         
-          <th scope="col">Long URL</th>
-          <th scope="col">Views</th>
-          <th scope="col"></th>
-          <th scope="col"></th> 
-          <th scope="col">Created on:</th>
-        </tr>
-      </thead>
+        <h3 class="card-title">My URLs</h3>
 
-      <tbody>
-        
+        <div class="card bg-light">
+          <table class="table">
+            <thead>
+              <tr class="row-fluid">
 
-        <% for(let url in urls) { %>
-        <tr class="row-fluid">
+                <th scope="col">Short URL</th>
 
-          <td scope="col">
-            <a href="/u/<%= url %>"> <%= url %></a>
-          </td>
+                <th scope="col">Long URL</th>
+                <th scope="col">Visits</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col">Created on:</th>
+              </tr>
+            </thead>
+
+            <tbody>
 
 
-         
+              <% for(let url in urls) { %>
+              <tr class="row-fluid">
 
-          <td scope="col">
-            <a href="<%= urls[url].longUrl %>"><%= urls[url].longUrl %></a>
-          </td>
-          <td scope="col">A</td>
-          <td scope="col">
-            <form method="GET" action="/urls/<%= url %>">
-              <input type="hidden" name="<%= urls[url] %>">
-              <button type="submit" class="btn btn-outline-success">Edit</button>
-            </form>
-          </td>
-          <td scope="col">
-            <form method="POST" action="/urls/<%= url %>/delete">
-              <input type="hidden" name="delete">
-              <button type="submit" class="btn btn-outline-danger">Delete</button>
-            </form>
-          </td>
-          <td scope="col">
-            <div> <%= urls[url].time %></div>
-           
-          </td>
-        </tr>
-        <% } %>
-        
-      </tbody>
-      
-    </table>
+                <td scope="col">
+                  <a href="/u/<%= url %>"> <%= url %></a>
+                </td>
+
+
+
+
+                <td scope="col">
+                  <a href="<%= urls[url].longUrl %>"><%= urls[url].longUrl %></a>
+                </td>
+                <td scope="col"><%= urls[url].visits %></td>
+                <td scope="col">
+                  <form method="GET" action="/urls/<%= url %>">
+                    <input type="hidden" name="<%= urls[url] %>">
+                    <button type="submit" class="btn btn-outline-success">Edit</button>
+                  </form>
+                </td>
+                <td scope="col">
+                  <form method="POST" action="/urls/<%= url %>/delete">
+                    <input type="hidden" name="delete">
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                  </form>
+                </td>
+                <td scope="col">
+                  <div> <%= urls[url].time %></div>
+
+                </td>
+              </tr>
+              <% } %>
+
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+
+
+
+      <div class="card-footer text-muted"></div>
     </div>
-    
-  </div>
-
-
-  
-    <div class="card-footer text-muted"></div>
-</div>
 
 
   </main>
   <footer>
     <%- include('partials/footer'); %>
   </footer>
-  
+
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

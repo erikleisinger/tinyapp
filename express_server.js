@@ -66,12 +66,15 @@ app.get('/u/:shortURL', (req, res) => {
 
   // first check if the URL exists
   if (validateId(urlDatabase, req.params.shortURL) === false) {
-    templateVars.error = `URL does not exist.`
+    templateVars.error = `URL does not exist.`;
     templateVars.user = users[req.session.user_id],
-      res.render('pages/index', templateVars);
+    res.render('pages/index', templateVars);
   }
 
-  // if URL exists, redirect to page
+  // if URL exists, increase visit count before redirecting
+  urlDatabase[req.params.shortURL].visits += 1;
+  console.log(urlDatabase[req.params.shortURL]);
+
   res.redirect(urlDatabase[req.params.shortURL].longUrl);
 });
 
@@ -109,14 +112,14 @@ app.post("/urls", (req, res) => {
 
   //new entry in urlDatabase
   // get timestamp for when the URL was created
-  let timeStamp = String(getDate())
-  console.log(`This is the return time: ${timeStamp}`)
-  urlDatabase[randomId] = {longUrl: convertedUrl, userId: req.session.user_id, time: timeStamp};
-  console.log(typeof(timeStamp))
-  console.log(timeStamp)
+  let timeStamp = String(getDate());
+  console.log(`This is the return time: ${timeStamp}`);
+  urlDatabase[randomId] = { longUrl: convertedUrl, userId: req.session.user_id, time: timeStamp, visits: 0 };
+  console.log(typeof (timeStamp));
+  console.log(timeStamp);
 
   templateVars.urls = urlsForUser(urlDatabase, req.session.user_id);
-  console.log(urlsForUser(urlDatabase, req.session.user_id))
+  console.log(urlsForUser(urlDatabase, req.session.user_id));
   res.render(`urls_index`, templateVars);
 });
 
@@ -148,7 +151,7 @@ app.post('/urls/:id/delete', (req, res) => {
     }
     // status code 403 if the requested URL is not the client's
   } else {
-    res.status(403).send('Access denied.')
+    res.status(403).send('Access denied.');
   }
   res.redirect('/urls');
 });
@@ -233,7 +236,7 @@ app.post('/login', (req, res) => {
     res.render('login', templateVars);
   }
 
-})
+});
 
 app.post('/logout', (req, res) => {
   // remove cooke from client
@@ -284,9 +287,9 @@ app.get('/urls/:shortURL', (req, res) => {
   };
 
   // first check to see if shortURL exists at all
-  if (validateId(urlDatabase, req.params.shortURL) == false) {
-    templateVars.error = `URL does not exist.`
-    res.render('pages/index', templateVars)
+  if (validateId(urlDatabase, req.params.shortURL) === false) {
+    templateVars.error = `URL does not exist.`;
+    res.render('pages/index', templateVars);
   }
 
   let userId = req.session.user_id;
@@ -309,7 +312,7 @@ app.get('/urls/:shortURL', (req, res) => {
     //if client is not logged in, they are redirected to the home page with relevant error
   } else {
     templateVars.error = `Not logged in`;
-    res.render('pages/index', templateVars)
+    res.render('pages/index', templateVars);
   }
 
 });

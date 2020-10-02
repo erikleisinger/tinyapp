@@ -1,7 +1,8 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-dark bg-success">
     <i class="fas fa-frog mr-2"></i><a class="navbar-brand" href="/urls">TinyApp</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -12,33 +13,33 @@
         <li class="nav-item">
           <a class="nav-link" href="/urls/new">Create New URL</a>
         </li>
-        
+
       </ul>
-       
+
       <span class="navbar-text ml-1">
         <% if (!user) { %>
-          <form class="form-check form-check-inline" action="/login" method="GET">
-            <button type="submit" class="btn btn-light">Login</button>
-          </form> 
-          <form class="form-check form-check-inline" action="/register" method="GET">
-            <input class="form-control mr-2" type="hidden" name="register">
-            <button type="submit" class="btn btn-secondary">Register</button>
-          </form> 
-       <% } else { %>
+        <form class="form-check form-check-inline" action="/login" method="GET">
+          <button type="submit" class="btn btn-light">Login</button>
+        </form>
+        <form class="form-check form-check-inline" action="/register" method="GET">
+          <input class="form-control mr-2" type="hidden" name="register">
+          <button type="submit" class="btn btn-secondary">Register</button>
+        </form>
+        <% } else { %>
         <form class="form-check form-check-inline" action="/logout" method="POST">
           <span class="mr-3"><%= user.email%></span>
           <input type="hidden" name="logout">
           <button type="submit" class="btn btn-outline-light">Logout</button>
         </form>
-      <% } %> 
-       
-        
+        <% } %>
+
+
       </span>
-        
-      </div>
-      
-     
+
     </div>
-    
+
+
+    </div>
+
   </nav>
 </header>
