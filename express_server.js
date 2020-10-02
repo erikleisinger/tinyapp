@@ -7,8 +7,8 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 
-const { generateRandomString, validateUser, findUser, urlsForUser, urlConverter, validateId } = require('./helpers');
-const PORT = 3050; // default port 8080
+const { generateRandomString, validateUser, findUser, urlsForUser, urlConverter, validateId, getDate } = require('./helpers');
+const PORT = 3080; // default port 8080
 
 app.set('view engine', 'ejs');
 app.use(cookieSession({
@@ -108,10 +108,15 @@ app.post("/urls", (req, res) => {
   let convertedUrl = urlConverter(req.body.longURL);
 
   //new entry in urlDatabase
-  urlDatabase[randomId] = { longUrl: convertedUrl, userId: req.session.user_id };
-
+  // get timestamp for when the URL was created
+  let timeStamp = String(getDate())
+  console.log(`This is the return time: ${timeStamp}`)
+  urlDatabase[randomId] = {longUrl: convertedUrl, userId: req.session.user_id, time: timeStamp};
+  console.log(typeof(timeStamp))
+  console.log(timeStamp)
 
   templateVars.urls = urlsForUser(urlDatabase, req.session.user_id);
+  console.log(urlsForUser(urlDatabase, req.session.user_id))
   res.render(`urls_index`, templateVars);
 });
 

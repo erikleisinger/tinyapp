@@ -12,11 +12,21 @@ const generateRandomString = function () {
   return randomString;
 };
 
-const testDb = {
-  "erik": {
-    email: "erik@erik.com",
-  }
+const getDate = function() {
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+  let today = new Date();
+  let day = today.getDate()
+  let month = monthNames[today.getMonth()]
+  let year = today.getFullYear()
+  let hour = today.getHours()
+  let min = Math.round(today.getMinutes(), 2)
+  let sec = today.getSeconds()
+  
+  return `${month} ${day}, ${year} at ${hour}:${min}`
 };
+getDate();
 
 const getUserByEmail = function (db, email) {
   for (let entry in db) {
@@ -26,9 +36,8 @@ const getUserByEmail = function (db, email) {
   };
   return false;
 };
-console.log(getUserByEmail(testDb, "erik@erik.com"))
 
-const loginUser = function (db, email, password) {
+const findUser = function (db, email, password) {
     let userAccount = getUserByEmail(db, email);
     if (userAccount) {
       if (bcrypt.compareSync(password, db[userAccount].password) === true) {
@@ -67,13 +76,16 @@ const validateUser = function(db, email, password) {
   
 };
 
+
+
+
 const  urlsForUser = function (db, id) {
   let returnData = {
 
   };
   for (let url in db) {
     if (db[url].userId === id) {
-      returnData[url] = {longUrl: db[url].longUrl, userId: db[url].userId}
+      returnData[url] = {longUrl: db[url].longUrl, userId: db[url].userId, time: db[url].time}
     }
   }
   if (Object.keys(returnData).length === 0) {
@@ -95,5 +107,4 @@ const urlConverter = function (url) {
 
 
 
-
-module.exports = { generateRandomString, validateUser, loginUser, urlsForUser, urlConverter, getUserByEmail, validateId }
+module.exports = { generateRandomString, validateUser, findUser, urlsForUser, urlConverter, getUserByEmail, validateId, getDate }
